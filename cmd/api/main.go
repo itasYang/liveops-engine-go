@@ -1,7 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"net/http"
+	"time"
+
+	apphttp "github.com/itasYang/liveops-engine-go/internal/http"
+)
 
 func main() {
-	fmt.Println("liveops-engine-go is running")
+	srv := apphttp.NewServer()
+
+	httpServer := &http.Server{
+		Addr:              ":8080",
+		Handler:           srv.Handler(),
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+
+	log.Printf("api listening on %s", httpServer.Addr)
+
+	if err := httpServer.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }
